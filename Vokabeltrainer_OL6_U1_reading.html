@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabulary Trainer · Unit 1 · Reading corner</title>
+<style>
+:root{--bg:#eef6f3;--card:#fff;--ink:#17332c;--mut:#5b7a72;--g:#2e8b6a;--g2:#1f6b51;--ice:#d7ebf2;--bad:#c0392b;--ok:#2e8b6a;--line:#cfe3dc}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.4}
+.wrap{max-width:640px;margin:0 auto;padding:16px}
+header{background:linear-gradient(135deg,var(--g2),#3aa6b9);color:#fff;border-radius:16px;padding:18px 20px;margin-bottom:14px}
+header h1{margin:0;font-size:1.4rem}header p{margin:4px 0 0;opacity:.9;font-size:.95rem}
+.card{background:var(--card);border-radius:16px;padding:20px;box-shadow:0 2px 8px rgba(23,51,44,.08);margin-bottom:14px}
+button{font:inherit;cursor:pointer;border:0;border-radius:12px;padding:12px 16px;background:var(--g);color:#fff;font-weight:600}
+button:hover{background:var(--g2)}button.sec{background:var(--ice);color:var(--ink)}button.sec:hover{background:#c3dfe9}
+button.bad{background:var(--bad)}button:disabled{opacity:.5;cursor:default}
+.modes{display:grid;gap:10px}.modes button{text-align:left;padding:14px 16px}.modes small{display:block;font-weight:400;opacity:.9}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.top{display:flex;justify-content:space-between;color:var(--mut);font-size:.9rem;margin-bottom:10px}
+.bar{height:8px;background:var(--line);border-radius:6px;overflow:hidden;margin-bottom:14px}.bar i{display:block;height:100%;background:var(--g);width:0;transition:width .3s}
+.q{font-size:1.7rem;font-weight:700;text-align:center;margin:18px 0;min-height:2.4em;display:flex;align-items:center;justify-content:center}
+.flip{perspective:800px;margin:10px 0 16px}
+.face{min-height:170px;border-radius:16px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;cursor:pointer;background:var(--ice);font-size:1.7rem;font-weight:700}
+.face small{font-size:.9rem;font-weight:400;color:var(--mut);margin-top:8px}
+.face.back{background:#e1f3ea}
+input[type=text]{width:100%;font:inherit;font-size:1.2rem;padding:14px;border:2px solid var(--line);border-radius:12px;margin-bottom:10px}
+input[type=text]:focus{outline:none;border-color:var(--g)}
+.opts{display:grid;gap:10px}.opts button{background:#fff;color:var(--ink);border:2px solid var(--line);text-align:left;font-weight:500}
+.opts button:hover{border-color:var(--g)}.opts .right{background:#e1f3ea;border-color:var(--ok)}.opts .wrong{background:#fbe5e2;border-color:var(--bad)}
+.fb{min-height:1.6em;margin:6px 0 12px;font-weight:600}.fb.ok{color:var(--ok)}.fb.no{color:var(--bad)}
+.hint{color:var(--mut);font-size:.95rem;min-height:1.3em;margin-bottom:8px}
+.res{text-align:center}.res .big{font-size:2.6rem;margin:6px 0}.res ul{text-align:left;padding-left:20px}
+.hide{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><h1>🧊 Vocabulary Trainer · Unit 1</h1><p>Reading corner &amp; vocabulary list pp. 181–183 · core vocabulary only</p></header>
+
+<div id="menu" class="card">
+  <div class="row" style="margin-bottom:14px"><strong>How many words per round?</strong>
+    <button class="sec" id="n10">10</button><button class="sec" id="n20">20</button><button class="sec" id="nall">All</button></div>
+  <div class="modes">
+    <button data-m="cards">🃏 Flashcards<small>Look at the word, flip it, rate yourself</small></button>
+    <button data-m="de-en">⌨️ German → English typing<small>Type the word yourself</small></button>
+    <button data-m="en-de">✅ English → German<small>Multiple choice with 4 answers</small></button>
+  </div>
+</div>
+
+<div class="row hide" id="topbar" style="margin-bottom:10px"><button class="sec" id="homeTop">🏠 Main menu</button></div>
+<div id="game" class="card hide"></div>
+</div>
+
+<script>
+// Core vocabulary only (en, accepted English answers, German)
+const W=[
+{en:"to stick, stuck",a:["to stick","stick","stuck"],de:"stecken; kleben"},
+{en:"activity",a:["activity"],de:"Bewegung (hier)"},
+{en:"onto",a:["onto"],de:"auf … hinauf"},
+{en:"commander",a:["commander"],de:"Kapitän; Kapitänin"},
+{en:"south",a:["south"],de:"nach Süden; südlich"},
+{en:"north",a:["north"],de:"nördlich"},
+{en:"much of the time",a:["much of the time"],de:"die meiste Zeit"},
+{en:"icy",a:["icy"],de:"eisig"},
+{en:"to make progress",a:["to make progress","make progress"],de:"vorankommen"},
+{en:"object",a:["object"],de:"Objekt; Gegenstand"},
+{en:"passage",a:["passage"],de:"Passage"},
+{en:"entertainment",a:["entertainment"],de:"Unterhaltung"},
+{en:"feeling",a:["feeling"],de:"Gefühl"},
+{en:"alive",a:["alive"],de:"am Leben"},
+{en:"location",a:["location"],de:"Aufenthaltsort"},
+{en:"master",a:["master"],de:"Meister; Herr"},
+{en:"filled with",a:["filled with","full of"],de:"gefüllt mit"},
+{en:"to drop",a:["to drop","drop","to fall","fall"],de:"fallen"},
+{en:"to go wrong",a:["to go wrong","go wrong"],de:"schiefgehen"},
+{en:"to crush",a:["to crush","crush"],de:"zerquetschen; einklemmen"},
+{en:"hardly",a:["hardly"],de:"kaum"},
+{en:"anywhere",a:["anywhere","everywhere"],de:"irgendwo; überall"},
+{en:"to taste",a:["to taste","taste"],de:"schmecken"},
+{en:"somehow",a:["somehow"],de:"irgendwie"},
+{en:"to get through sth",a:["to get through sth","to get through","get through"],de:"etw. überstehen"},
+{en:"to melt",a:["to melt","melt"],de:"schmelzen"},
+{en:"cold",a:["cold"],de:"Erkältung; Kälte"},
+{en:"to get sick",a:["to get sick","get sick","to get ill","get ill"],de:"krank werden"},
+{en:"lack (of)",a:["lack","lack of","a lack of"],de:"Mangel (an); Fehlen (von)"},
+{en:"dog team",a:["dog team"],de:"Hundegespann"},
+{en:"trapped",a:["trapped"],de:"gefangen; eingeschlossen"},
+{en:"to go bad",a:["to go bad","go bad","to go off","go off"],de:"schlecht werden"},
+{en:"mad",a:["mad","crazy","angry"],de:"verrückt; wütend"},
+{en:"to lie ahead",a:["to lie ahead","lie ahead"],de:"noch kommen"}
+];
+
+const $=s=>document.querySelector(s);
+const menu=$("#menu"),game=$("#game");
+let N=10,mode,deck,i,score,wrong,answered;
+const shuffle=a=>{a=a.slice();for(let k=a.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[a[k],a[j]]=[a[j],a[k]]}return a};
+const norm=s=>s.toLowerCase().replace(/\([^)]*\)/g,"").replace(/[^a-zäöüß\s]/g,"").replace(/\s+/g," ").trim().replace(/^to /,"").replace(/ (sth|of)$/,"").trim();
+
+function setN(n){N=n;["n10","n20","nall"].forEach(id=>$("#"+id).className="sec");$("#"+({10:"n10",20:"n20",999:"nall"}[n])).className="";}
+$("#n10").onclick=()=>setN(10);$("#n20").onclick=()=>setN(20);$("#nall").onclick=()=>setN(999);setN(10);
+document.querySelectorAll("[data-m]").forEach(b=>b.onclick=()=>start(b.dataset.m,shuffle(W).slice(0,N)));
+
+function start(m,words){mode=m;deck=words;i=0;score=0;wrong=[];menu.classList.add("hide");game.classList.remove("hide");$("#topbar").classList.remove("hide");show()}
+function goMenu(){game.classList.add("hide");$("#topbar").classList.add("hide");menu.classList.remove("hide")}
+$("#homeTop").onclick=goMenu;
+function head(){return `<div class="top"><span>Word ${i+1} / ${deck.length}</span><span>✔ ${score}</span></div><div class="bar"><i style="width:${i/deck.length*100}%"></i></div>`}
+function next(){i++;i<deck.length?show():finish()}
+function show(){answered=false;const w=deck[i];
+ if(mode==="cards"){
+  game.innerHTML=head()+`<div class="flip"><div class="face" id="face">${w.en}<small>Tap to flip</small></div></div>
+  <div class="row hide" id="jr"><button id="yes" style="flex:1">✔ Got it</button><button id="no" class="bad" style="flex:1">✘ Again</button></div>`;
+  $("#face").onclick=()=>{const f=$("#face");f.className="face back";f.innerHTML=`${w.de}<small>${w.en}</small>`;$("#jr").classList.remove("hide")};
+  $("#yes").onclick=()=>{score++;next()};$("#no").onclick=()=>{wrong.push(w);next()};
+ }else if(mode==="de-en"){
+  const first=w.a[0].replace(/^to /,"")[0];
+  game.innerHTML=head()+`<div class="q">${w.de}</div><div class="hint" id="hint"></div>
+  <input type="text" id="inp" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type the English word …">
+  <div class="fb" id="fb"></div>
+  <div class="row"><button id="chk">Check</button><button id="hbtn" class="sec">💡 Hint</button><button id="skip" class="sec">I don't know</button></div>`;
+  const inp=$("#inp");inp.focus();
+  inp.onkeydown=e=>{if(e.key==="Enter")(answered?next():check())};
+  $("#chk").onclick=()=>answered?next():check();
+  $("#hbtn").onclick=()=>{$("#hint").textContent="Starts with “"+first+"” · "+w.en.split(" ").length+" word(s)"};
+  $("#skip").onclick=()=>{if(!answered)fail(false)};
+  function done(){answered=true;inp.disabled=true;$("#chk").textContent="Next →";$("#hbtn").disabled=true;$("#skip").disabled=true;$("#chk").focus()}
+  function fail(typed){wrong.push(w);$("#fb").className="fb no";$("#fb").textContent="Correct answer: "+w.en;done()}
+  function check(){const v=norm(inp.value);if(!v)return;
+   if(w.a.some(x=>norm(x)===v)){score++;$("#fb").className="fb ok";$("#fb").textContent="✔ Correct!";done()}else fail(true)}
+ }else{
+  const others=shuffle(W.filter(x=>x!==w&&x.de!==w.de)).slice(0,3);
+  const opts=shuffle([w,...others]);
+  game.innerHTML=head()+`<div class="q">${w.en}</div><div class="opts" id="opts">${opts.map((o,k)=>`<button data-k="${k}">${o.de}</button>`).join("")}</div>
+  <div class="fb" id="fb"></div><button id="nx" class="hide">Next →</button>`;
+  document.querySelectorAll("#opts button").forEach(b=>b.onclick=()=>{
+   if(answered)return;answered=true;const o=opts[b.dataset.k];
+   document.querySelectorAll("#opts button").forEach(x=>{if(opts[x.dataset.k]===w)x.classList.add("right")});
+   if(o===w){score++;$("#fb").className="fb ok";$("#fb").textContent="✔ Correct!"}else{b.classList.add("wrong");wrong.push(w);$("#fb").className="fb no";$("#fb").textContent="Correct: "+w.de}
+   $("#nx").classList.remove("hide");$("#nx").focus()});
+  $("#nx").onclick=next;
+ }
+}
+function finish(){
+ const pct=Math.round(score/deck.length*100);
+ const emoji=pct===100?"🏆":pct>=80?"🎉":pct>=50?"👍":"💪";
+ game.innerHTML=`<div class="res"><div class="big">${emoji}</div><h2>${score} out of ${deck.length} correct (${pct}%)</h2>
+ ${wrong.length?`<p>Practise these words again:</p><ul>${wrong.map(w=>`<li><b>${w.en}</b> – ${w.de}</li>`).join("")}</ul>`:`<p>All correct – well done!</p>`}
+ <div class="row" style="justify-content:center">${wrong.length?`<button id="rep">Repeat mistakes</button>`:""}<button class="sec" id="home">Main menu</button></div></div>`;
+ if(wrong.length)$("#rep").onclick=()=>start(mode,shuffle(wrong));
+ $("#home").onclick=goMenu;
+}
+</script>
+</body>
+</html>
